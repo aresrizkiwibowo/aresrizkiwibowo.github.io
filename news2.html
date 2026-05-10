@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+    <head>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+        <link href="styles.css" rel="stylesheet">
+        <title>Animal Quiz!</title>
+    </head>
+
+    <body>
+        <header>
+            <a href="index.html" class="no_underline">
+                FiftyNews
+            </a>
+        </header>
+        <header class="subheader">
+            The Best News Media in Fiftyville
+        </header>
+        <main style="display: grid; place-items: center;">
+            <h1 style="font-size: 4rem;">Animal Quiz!</h1>
+            <h2 id=block>
+                Drag and drop each animal to the correct group!
+            </h2>
+            <div style="display: grid; place-items: center;">
+                <button id="check" class="btn btn-primary button green_button">Check Answer</button>
+                <div id="retry" style="color: #444; font-size: 1rem;"></div>
+                <h3 id="score" style="background-color: #000; margin-top: 2rem; text-align: center; width: 100vw;"></h3>
+                <h4 id="message"></h4>
+                <h5 id="detail"></h5>
+
+            </div>
+            <div id="flex_container" style="display: flex; justify-content: center;">
+                <script>
+                    // Droppable big elements
+                    function make_group(group_id, text) {
+                        let group = document.createElement('div');
+                        group.setAttribute('class', "droppable_group");
+
+                        // Create header if there's any
+                        if (text !== "") {
+                            let header = document.createElement('h2')
+                            header.textContent = text;
+                            header.setAttribute('style', "font-size: 2rem; text-align: center;")
+                            group.appendChild(header);
+                        }
+
+                        let droppable_box = document.createElement('div');
+                        droppable_box.setAttribute('class', "droppable_to");
+                        droppable_box.setAttribute('id', group_id);
+                        group.appendChild(droppable_box);
+
+                        group.addEventListener('dragover', function(event) {
+                            event.preventDefault();
+                        });
+
+                        // Find the dragged element, and append if dropped
+                        group.addEventListener('drop', function() {
+                            if (!droppable_box.contains(document.getElementById((event.dataTransfer.getData('text/plain'))))) {
+                                let dragged = document.getElementById(event.dataTransfer.getData('text/plain'));
+                                droppable_box.append(dragged);
+                            }
+                        });
+
+                        flex_container.appendChild(group);
+                    }
+
+
+                    // Draggable small elements
+                    function make_choice(choice_id, name, pic_url) {
+                        let image = document.createElement('img');
+                        image.setAttribute('src', pic_url);
+                        // Prevent the image from being dragged without text
+                        image.setAttribute('draggable', "false");
+
+                        let choice = document.createElement('div');
+                        choice.setAttribute('id', choice_id);
+                        choice.setAttribute('class', "draggable");
+                        choice.setAttribute('draggable', "true");
+                        choice.setAttribute('title', "Hold to drag");
+                        choice.textContent = name;
+                        // Join image to the div
+                        choice.appendChild(image);
+
+                        document.querySelector("#source").appendChild(choice);
+
+                        // Set ID to dragged
+                        choice.addEventListener('dragstart', function(event) {
+                            event.dataTransfer.setData('text/plain', choice.id);
+                        });
+                    }
+
+
+                    make_group("source", "");
+                    document.querySelector("#source").setAttribute('style', "width: 14rem;");
+                    make_group("with", "They Have Paw Pads");
+                    make_group("without", "They Don't Have Paw Pads");
+
+                    make_choice("1", "Cat", "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Cat_August_2010-4.jpg/960px-Cat_August_2010-4.jpg");
+                    make_choice("2", "Gold Fish", "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/%E3%83%AF%E3%82%AD%E3%83%B320120701.JPG/960px-%E3%83%AF%E3%82%AD%E3%83%B320120701.JPG");
+                    make_choice("3", "Bird", "https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Bali_Myna_0A2A9443.jpg/960px-Bali_Myna_0A2A9443.jpg");
+                    make_choice("4", "Seal", "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/Seehund.jpg/960px-Seehund.jpg");
+                    make_choice("5", "Giant Panda", "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Panda_Cub_from_Wolong%2C_Sichuan%2C_China.JPG/960px-Panda_Cub_from_Wolong%2C_Sichuan%2C_China.JPG");
+                    make_choice("6", "Rabbit", "https://upload.wikimedia.org/wikipedia/commons/c/c6/California_High_Desert_Cottontail_Resting_%28cropped%29.jpg");
+                    make_choice("7", "Red Panda", "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Red_Panda_%2824986761703%29.jpg/960px-Red_Panda_%2824986761703%29.jpg");
+                    make_choice("8", "Koala", "https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Koala_climbing_tree.jpg/960px-Koala_climbing_tree.jpg");
+                    make_choice("9", "Pomeranian", "https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/Tri-colored-pom-fuzzybutt.jpg/960px-Tri-colored-pom-fuzzybutt.jpg");
+                    make_choice("10", "Axolotl", "https://upload.wikimedia.org/wikipedia/commons/f/f6/AxolotlBE.jpg");
+
+                    // Variables for total tries and wrong answers throughout the attempts
+                    let tries = 0;
+                    let wrong = 0;
+
+                    // Check answer button
+                    document.getElementById("check").addEventListener('click', function() {
+                        tries++;
+
+                        // Answer IDs
+                        const with_answer = [1, 3, 5, 8, 9, 10];
+                        const without_answer = [2, 4, 6, 7];
+
+                        let goal = with_answer.length + without_answer.length;
+                        let points = 0;
+
+                        // Check answers of with
+                        for (let n of with_answer) {
+                            if (document.getElementById("with").contains(document.getElementById(n.toString()))) {
+                                points++;
+                            } else {
+                                wrong++;
+                            }
+
+                        }
+
+                        // Check answers of without
+                        for (let n of without_answer) {
+                            if (document.getElementById("without").contains(document.getElementById(n.toString()))) {
+                                points++;
+                            } else {
+                                wrong++;
+                            }
+                        }
+
+                        document.getElementById("score").textContent = points.toString() + "/" + goal.toString();
+
+                        function try_again() {
+                            document.getElementById("retry").textContent = "you can try again";
+                            document.getElementById("message").style.backgroundColor = "";
+                        }
+
+                        if (points == goal) {
+                            document.getElementById("message").textContent = "PERFECT!";
+                            document.getElementById("detail").textContent = "You tried " + tries.toString() + " times and got " + wrong + " wrong answers.";
+                            document.getElementById("retry").textContent = "";
+                            document.getElementById("message").style.backgroundColor = "#FFD721";
+                            document.getElementById("score").style.color = "#FF0";
+                        } else if (points >= 7) {
+                            document.getElementById("message").textContent = "Nice!"
+                            document.getElementById("score").style.color = "#FC0";
+                            try_again();
+                        } else if (points >= 5) {
+                            document.getElementById("message").textContent = "Try Again."
+                            document.getElementById("score").style.color = "#F90";
+                            try_again();
+                        } else {
+                            document.getElementById("message").textContent = "Ouch!"
+                            document.getElementById("score").style.color = "#F00";
+                            try_again();
+                        }
+                    });
+                </script>
+            </div>
+        </main>
+        <footer>
+            <hr style="background-color: #AA5; height: 1rem; opacity: 0.5;">
+            &#169; 2026 Fifty Media Corp.
+        </footer>
+    </body>
+
+</html>
